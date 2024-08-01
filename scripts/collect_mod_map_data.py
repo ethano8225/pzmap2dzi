@@ -71,8 +71,9 @@ textpackmatch = {
 def addRequiredModpacks(steamid):
                    #Otr 2nd rte,    Aquatsar,   MM:Server, NW Blockade, Irvingtn Rd, BdfrdFlls,KnoxLtoEerie,Leavenburg -riversdebridge,   coryerdon,
     falsepositive=["2603239477","2392987599","2725216703","2789257975","2803291537","522891356","2595785944","3085090251","3085088928","2782415851"]
+    #note: these are false positives because they contain no \texturepack\ folder
     if steamid in falsepositive:
-        return ""
+        return "" #dont add anything to depend_textures
     if int(steamid) in textpackmatch:
         formatted="\n            - "+textpackmatch.get(int(steamid))
     else:
@@ -133,15 +134,17 @@ if __name__ == '__main__':
                 maps.append((name, mods[name],mod_id))
             elif 'texture' in mods[name]:
                 textures.append((name, mods[name],mod_id))
-    
+            #add mod_id to support auto-depend_textures
+
     with open('map_data.yaml', 'w') as f:
         #################
         dependsavepath=".\\scripts\\dependsave\\"
         with open(dependsavepath+"refreshDepends.txt","r") as refresh:
             if refresh.readline().strip() == "1":
-                saveTime=1
+                refreshDepends=1
             else:
-                saveTime=0
+                refreshDepends=0
+        refresh.close()
         ##################
         f.write('textures:\n')
         for name, t, mod_id in textures:
@@ -161,7 +164,7 @@ if __name__ == '__main__':
                     for steamID in neededSteamIDs:
                         nextitem= addRequiredModpacks(steamID)
             else:
-                if saveTime==1:
+                if refreshDepends==1:
                     lstOfRecMods=get_mod_dep.get_info(mod_id)
                     if len(lstOfRecMods) > 0:
                         with open(pathtosave,"w") as depsave:
@@ -169,6 +172,10 @@ if __name__ == '__main__':
                                 depsave.write(str(neededSteamID)+"\n")
                                 nextitem= addRequiredModpacks(neededSteamID)
                                 f.write(nextitem)
+                    with open(dependsavepath+"refreshDepends.txt","w") as refresh:
+                        refresh.truncate(0)
+                        refresh.write("0") #set refreshDepends = 0 after getting all {steamid}.txt files}
+                    refresh.close()
             total+=(time.time()-startTime)
             ########
             if 'texture' in m:

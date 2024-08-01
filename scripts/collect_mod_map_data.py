@@ -1,5 +1,6 @@
 import os
 import yaml
+import get_dep_textures
 
 DEFAULT_MAP = '''
     default:
@@ -32,9 +33,37 @@ MAP_TEMPLATE = '''
             {}
         encoding: utf8
         depend_texutres:
-            - default'''
+            - '''
 
+#######
+textpackmatch = {
+    2898065560: 'AzaMountainTiles', 
+    2804428637: 'BigZombieMonkeys_tile_pack', 
+    2925574774: 'Cookie_Tiles',
+    2337452747: 'Diederiks_tile_Palooza',
+    2599752664: 'DylansTiles',
+    2923495608: 'dylanstiles_bundle',
+    2977982429: 'DylansTiles_Elysium',
+    2774834715: 'EN_Newburbs',
+    2784607980: 'EN_Flags',
+    2554699200: 'FantaStreetTiles_01',
+    2901328637: 'FearsFunkyTiles',
+    2734679675: 'GreensTiles',
+    2879745353: 'Melos Tiles for Miles',
+    2844829195: 'Oujinjin Tiles',
+    3003792372: 'Ryu Tiles',
+    2837923608: 'Perts Party Tiles',
+    2740919036: 'SkizotsTiles',
+    2852704777: 'Simon-MDs-Tiles',
+    2384329562: 'tkTiles_01',
+    2844685624: "Tryhonesty's Tiles"
+    }
 
+def addRequiredModpacks(steamid):
+    if steamid in textpackmatch:
+        wholelist="\n\t\t\t- "+ textpackmatch[steamid]
+    return wholelist
+########
 
 def has_texture(tpath):
     if not os.path.isdir(tpath):
@@ -101,6 +130,13 @@ if __name__ == '__main__':
             f.write(MAP_TEMPLATE.format(m['map']))
             if 'texture' in m:
                 f.write(TEXTURE_TEMPLATE.format(m['texture']))
+            
+            ########
+            for neededSteamID in get_dep_textures.get_info(mod_id):
+                nextitem= addRequiredModpacks(neededSteamID)
+                f.write(nextitem)
+            ########
+            
             f.write('\n\n')
 
 

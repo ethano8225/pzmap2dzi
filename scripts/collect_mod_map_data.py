@@ -144,7 +144,7 @@ if __name__ == '__main__':
     with open('map_data.yaml', 'w') as f:
         #################
         dependsavepath=".\\scripts\\dependsave\\"
-        if len(os.listdir(dependsavepath)) == 1:
+        if len(os.listdir(dependsavepath)) == 2:
             refreshDepends=1 #force refresh if no mod_id.txt files present
         else:
             with open(dependsavepath+"refreshDepends.txt","r") as refresh:

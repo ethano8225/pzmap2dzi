@@ -144,12 +144,15 @@ if __name__ == '__main__':
     with open('map_data.yaml', 'w') as f:
         #################
         dependsavepath=".\\scripts\\dependsave\\"
-        with open(dependsavepath+"refreshDepends.txt","r") as refresh:
-            if refresh.readline().strip() == "1":
-                refreshDepends=1
-            else:
-                refreshDepends=0
-        refresh.close()
+        if len(os.listdir(dependsavepath)) == 1:
+            refreshDepends=1 #force refresh if no mod_id.txt files present
+        else:
+            with open(dependsavepath+"refreshDepends.txt","r") as refresh:
+                if refresh.readline().strip() == "1":
+                    refreshDepends=1
+                else:
+                    refreshDepends=0
+            refresh.close()
         ##################
         f.write('textures:\n')
         for name, t, mod_id in textures:
@@ -160,7 +163,7 @@ if __name__ == '__main__':
         for name, m,mod_id in maps:
             f.write('    {}:'.format(name))
             f.write(MAP_TEMPLATE.format(m['map']))
-            ########
+            ################
             startTime = time.time()
             pathtosave=dependsavepath+str(mod_id)+".txt"
             if os.path.exists(pathtosave):
@@ -169,6 +172,7 @@ if __name__ == '__main__':
                     for steamID in neededSteamIDs:
                         nextitem= addRequiredModpacks(steamID)
                         f.write(nextitem)
+                depview.close()
             else:
                 if refreshDepends==1:
                     lstOfRecMods=get_mod_dep.get_info(mod_id)
@@ -178,12 +182,12 @@ if __name__ == '__main__':
                                 depsave.write(str(neededSteamID)+"\n")
                                 nextitem= addRequiredModpacks(neededSteamID)
                                 f.write(nextitem)
+                        depsave.close()
             with open(dependsavepath+"refreshDepends.txt","w") as refresh:
-                refresh.truncate(0)
                 refresh.write("0") #set refreshDepends = 0 after getting all {steamid}.txt files}
-            refresh.close()
+            refresh.close()        #(opening with "w" overwrites file)
             total+=(time.time()-startTime)
-            ########
+            ################
             if 'texture' in m:
                 f.write(TEXTURE_TEMPLATE.format(m['texture']))
             f.write('\n\n')

@@ -37,33 +37,33 @@ MAP_TEMPLATE = '''
             - default'''
 
 ######
-textpackmatch = [(926737806, 'Otr'), 
-                 (1254546530, 'Eerie Country'), 
-                 (1703604612, 'jiggasGreenFire'), 
-                 (2337452747, 'Diederiks_tile_Palooza'), 
-                 (2384329562, 'tkTiles_01'), 
-                 (2463499011, 'Grapeseed'), 
-                 (2536865912, 'Blackwood'), 
-                 (2554699200, 'FantaStreetTiles_01'), 
-                 (2595249356, 'Fort Knox linked to Eerie Country'), 
-                 (2599752664, 'DylansTiles'), 
-                 (2734679675, 'GreensTiles'), 
-                 (2740919036, 'SkizotsTiles'), 
-                 (2774834715, 'EN_Newburbs'), 
-                 (2784607980, 'EN_Flags'), 
-                 (2804428637, 'BigZombieMonkeys_tile_pack'), 
-                 (2837923608, 'Perts Party Tiles'), 
-                 (2844685624, "Tryhonesty's Tiles"), 
-                 (2844829195, 'Oujinjin Tiles'), 
-                 (2852704777, 'Simon-MDs-Tiles'), 
-                 (2879745353, 'Melos Tiles for Miles'), 
-                 (2898065560, 'AzaMountainTiles'), 
-                 (2901328637, 'FearsFunkyTiles'), 
-                 (2923495608, 'dylanstiles_bundle'), 
-                 (2925574774, 'Cookie_Tiles'), 
-                 (2977982429, 'DylansTiles_Elysium'), 
-                 (2991554892, 'TileToItemComverter'), 
-                 (3003792372, 'Ryu Tiles')]
+textpackmatch = { 926737806: 'Otr', 
+                 1254546530: 'Eerie Country', 
+                 1703604612: 'jiggasGreenFire', 
+                 2337452747: 'Diederiks_tile_Palooza', 
+                 2384329562: 'tkTiles_01', 
+                 2463499011: 'Grapeseed', 
+                 2536865912: 'Blackwood', 
+                 2554699200: 'FantaStreetTiles_01', 
+                 2595249356: 'Fort Knox linked to Eerie Country', 
+                 2599752664: 'DylansTiles', 
+                 2734679675: 'GreensTiles', 
+                 2740919036: 'SkizotsTiles', 
+                 2774834715: 'EN_Newburbs', 
+                 2784607980: 'EN_Flags', 
+                 2804428637: 'BigZombieMonkeys_tile_pack', 
+                 2837923608: 'Perts Party Tiles', 
+                 2844685624: "Tryhonesty's Tiles", 
+                 2844829195: 'Oujinjin Tiles', 
+                 2852704777: 'Simon-MDs-Tiles', 
+                 2879745353: 'Melos Tiles for Miles', 
+                 2898065560: 'AzaMountainTiles', 
+                 2901328637: 'FearsFunkyTiles', 
+                 2923495608: 'dylanstiles_bundle', 
+                 2925574774: 'Cookie_Tiles', 
+                 2977982429: 'DylansTiles_Elysium', 
+                 2991554892: 'TileToItemComverter', 
+                 3003792372: 'Ryu Tiles'}
 
 falsepositive=['2392987599',#Over the River 2nd route
                '2595785944',#Aquatsar Yacht club
@@ -168,6 +168,7 @@ if __name__ == '__main__':
                     neededSteamIDs = [line.rstrip() for line in depview]
                     for steamID in neededSteamIDs:
                         nextitem= addRequiredModpacks(steamID)
+                        f.write(nextitem)
             else:
                 if refreshDepends==1:
                     lstOfRecMods=get_mod_dep.get_info(mod_id)

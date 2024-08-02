@@ -37,41 +37,47 @@ MAP_TEMPLATE = '''
             - default'''
 
 ######
-textpackmatch = {
-    2898065560: 'AzaMountainTiles', 
-    2804428637: 'BigZombieMonkeys_tile_pack', 
-    2925574774: 'Cookie_Tiles',
-    2337452747: 'Diederiks_tile_Palooza',
-    2599752664: 'DylansTiles',
-    2923495608: 'dylanstiles_bundle',
-    2977982429: 'DylansTiles_Elysium',
-    2774834715: 'EN_Newburbs',
-    2784607980: 'EN_Flags',
-    2554699200: 'FantaStreetTiles_01',
-    2901328637: 'FearsFunkyTiles',
-    2734679675: 'GreensTiles',
-    2879745353: 'Melos Tiles for Miles',
-    2844829195: 'Oujinjin Tiles',
-    3003792372: 'Ryu Tiles',
-    2837923608: 'Perts Party Tiles',
-    2740919036: 'SkizotsTiles',
-    2852704777: 'Simon-MDs-Tiles',
-    2384329562: 'tkTiles_01',
-    2844685624: "Tryhonesty's Tiles",
-    1703604612: 'jiggasGreenFire',
-    2463499011: 'Grapeseed',
-    2536865912: 'Blackwood',
-    2991554892: 'TileToItemComverter',
-    1254546530: 'Eerie Country',
-    2595249356: 'Fort Knox linked to Eerie Country',
-    926737806: 'Otr',
+textpackmatch = [(926737806, 'Otr'), 
+                 (1254546530, 'Eerie Country'), 
+                 (1703604612, 'jiggasGreenFire'), 
+                 (2337452747, 'Diederiks_tile_Palooza'), 
+                 (2384329562, 'tkTiles_01'), 
+                 (2463499011, 'Grapeseed'), 
+                 (2536865912, 'Blackwood'), 
+                 (2554699200, 'FantaStreetTiles_01'), 
+                 (2595249356, 'Fort Knox linked to Eerie Country'), 
+                 (2599752664, 'DylansTiles'), 
+                 (2734679675, 'GreensTiles'), 
+                 (2740919036, 'SkizotsTiles'), 
+                 (2774834715, 'EN_Newburbs'), 
+                 (2784607980, 'EN_Flags'), 
+                 (2804428637, 'BigZombieMonkeys_tile_pack'), 
+                 (2837923608, 'Perts Party Tiles'), 
+                 (2844685624, "Tryhonesty's Tiles"), 
+                 (2844829195, 'Oujinjin Tiles'), 
+                 (2852704777, 'Simon-MDs-Tiles'), 
+                 (2879745353, 'Melos Tiles for Miles'), 
+                 (2898065560, 'AzaMountainTiles'), 
+                 (2901328637, 'FearsFunkyTiles'), 
+                 (2923495608, 'dylanstiles_bundle'), 
+                 (2925574774, 'Cookie_Tiles'), 
+                 (2977982429, 'DylansTiles_Elysium'), 
+                 (2991554892, 'TileToItemComverter'), 
+                 (3003792372, 'Ryu Tiles')]
 
-    }
+falsepositive=['2392987599',#Over the River 2nd route
+               '2595785944',#Aquatsar Yacht club
+               '2603239477',#ModManager:Server
+               '2725216703',#NorthWest Blockade
+               '2782415851',#Irvington Road
+               '2789257975',#BedfordFalls
+               '2803291537',#FortKnoxLinkedtoEerieCountry
+               '3085088928',#Leavenburg
+               '3085090251',#Leavenburg-Riversdebridge
+               '522891356'] #coryerdon
+#note: these are false positives because they contain no \texturepack\ folder, no effect on map
 
 def addRequiredModpacks(steamid):
-                   #Otr 2nd rte,    Aquatsar,   MM:Server, NW Blockade, Irvingtn Rd, BdfrdFlls,KnoxLtoEerie,Leavenburg -riversdebridge,   coryerdon,
-    falsepositive=["2603239477","2392987599","2725216703","2789257975","2803291537","522891356","2595785944","3085090251","3085088928","2782415851"]
-    #note: these are false positives because they contain no \texturepack\ folder
     if steamid in falsepositive:
         return "" #dont add anything to depend_textures
     if int(steamid) in textpackmatch:
@@ -131,10 +137,9 @@ if __name__ == '__main__':
         mods = get_mod_conf(mod_root, mod_id)
         for name in mods:
             if 'map' in mods[name]:
-                maps.append((name, mods[name],mod_id))
+                maps.append((name, mods[name],mod_id))   #add mod_id to support auto-depend_textures
             elif 'texture' in mods[name]:
                 textures.append((name, mods[name],mod_id))
-            #add mod_id to support auto-depend_textures
 
     with open('map_data.yaml', 'w') as f:
         #################
@@ -172,10 +177,10 @@ if __name__ == '__main__':
                                 depsave.write(str(neededSteamID)+"\n")
                                 nextitem= addRequiredModpacks(neededSteamID)
                                 f.write(nextitem)
-                    with open(dependsavepath+"refreshDepends.txt","w") as refresh:
-                        refresh.truncate(0)
-                        refresh.write("0") #set refreshDepends = 0 after getting all {steamid}.txt files}
-                    refresh.close()
+            with open(dependsavepath+"refreshDepends.txt","w") as refresh:
+                refresh.truncate(0)
+                refresh.write("0") #set refreshDepends = 0 after getting all {steamid}.txt files}
+            refresh.close()
             total+=(time.time()-startTime)
             ########
             if 'texture' in m:

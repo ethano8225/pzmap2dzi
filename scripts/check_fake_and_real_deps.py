@@ -80,7 +80,7 @@ if __name__ == '__main__':
                                     else:
                                         if extraDebugPrint:print("No other folders found, but still real dependency\n")
             print('\n\nFAKE DEPENDENCIES\n',fakedependencies, "\n",sep="")
-            print("\nREAL DEPENDENCIES",realdependencies,sep="")
+            print("\nREAL DEPENDENCIES\n",realdependencies,sep="")
             fakeFile.close()
 
             if extraDebugPrint==1:

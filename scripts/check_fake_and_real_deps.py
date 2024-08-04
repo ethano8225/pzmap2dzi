@@ -82,7 +82,8 @@ if __name__ == '__main__':
             print('\n\nFAKE DEPENDENCIES\n',fakedependencies, "\n",sep="")
             print("\nREAL DEPENDENCIES\n",realdependencies,sep="")
             fakeFile.close()
-
+            realFile.close()
+            
             if extraDebugPrint==1:
                 print("\nExtra info: these are off-cases (still included in fake dependencies)\nNOT DOWNLOADED",notdownloaded_fakedep)
                 print("NO TEXTURES",noTextures)

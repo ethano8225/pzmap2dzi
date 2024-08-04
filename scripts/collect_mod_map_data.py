@@ -1,7 +1,6 @@
 import os
 import yaml
 import get_mod_dep
-import time
 
 DEFAULT_MAP = '''
     default:
@@ -79,10 +78,10 @@ def get_mod_conf(mod_root, mod_id):
         
         #############################
         if has_texture(fullpath) and os.path.isdir(map_root) and int(mod_id) in realdependencies:
-            for map_name in os.listdir(map_root):                                    #"if int(mod_id) in realdeps" means if
-                mpath = os.path.join(mod_id, 'mods', name, 'media', 'maps', map_name)#the map's textures are also required for other
-                if is_map(os.path.join(mod_root, mpath)):                            #maps to load, put it in this catagory
-                    if 'map' in mod:                                              
+            for map_name in os.listdir(map_root):                               #if int(mod_id) in real, that means 
+                mpath = os.path.join(mod_id, 'mods', name, 'media', 'maps', map_name)#the map's textures may also be required for other
+                if is_map(os.path.join(mod_root, mpath)):                            #maps to load, otherwise other maps don't need it
+                    if 'map' in mod:
                         print('multiple maps in single mod:')
                         print(mpath)
                     else:
@@ -143,7 +142,7 @@ if __name__ == '__main__':
         for name in mods:
             
             #############
-            if 'map+texture' in mods[name]: #adds a new variation, if mod is has map, textures AND is required by other mods, add it to this list
+            if 'map+texture' in mods[name]: #adds a new variation, if mod is map and texture,
                 mapandtexture.append((name, mods[name],mod_id))
             #############
             
@@ -158,26 +157,24 @@ if __name__ == '__main__':
             f.write('    {}:'.format(name))
             f.write(TEXTURE_TEMPLATE.format(t['texture']))
             f.write('\n\n')
-            
-        ################
+        print(mapandtexture)
         for name, t, mod_id in mapandtexture:
-            f.write('    {}:'.format(name)) #adds texture template for maps req'd by other mods
-            save=t['map+texture']           #example: Over The Road (Otr) is one of these maps
-            both=save.split(":")
-            mp,text=both[0],both[1]
-            f.write(TEXTURE_TEMPLATE.format(text))
-            f.write('\n\n')
-        #################
-        
-        f.write('maps:' + DEFAULT_MAP)
-        f.write('\n')
-        
-        #################
-        for name, m, mod_id in mapandtexture:
             f.write('    {}:'.format(name))
             save=t['map+texture']
             both=save.split(":")
             mp,text=both[0],both[1]
+            f.write(TEXTURE_TEMPLATE.format(text))
+            f.write('\n\n')
+            
+        f.write('maps:' + DEFAULT_MAP)
+        f.write('\n')
+        for name, m, mod_id in mapandtexture:
+            print(name)
+            f.write('    {}:'.format(name))
+            save=m['map+texture']
+            both=save.split(":")
+            mp,text=both[0],both[1]
+            print(mp, "MP")
             f.write(MAP_TEMPLATE.format(mp))
             pathtosave=dependsavepath+str(mod_id)+".txt"
             if os.path.exists(pathtosave) and refreshDepends==0:
@@ -198,8 +195,10 @@ if __name__ == '__main__':
                             f.write(nextitem)
                         f.write("\n            - "+name)
                     depsave.close()
-            f.write('\n\n')
-        #################
+                else:
+                    f.write("\n            - "+name) #if no mods req'd but it still needs to call itself
+            f.write('\n\n')                          #for example, Eerie Country
+
 
         for name, m,mod_id in maps:
             f.write('    {}:'.format(name))
@@ -209,8 +208,8 @@ if __name__ == '__main__':
             pathtosave=dependsavepath+str(mod_id)+".txt"
             if os.path.exists(pathtosave):
                 with open(pathtosave,"r") as depview:
-                    neededSteamIDs = [line.rstrip() for line in depview] #if steamModID.txt exists, do not create a file for it
-                    for steamID in neededSteamIDs:                       # simply process the already-made file
+                    neededSteamIDs = [line.rstrip() for line in depview]
+                    for steamID in neededSteamIDs:
                             nextitem= addRequiredModpacks(steamID)
                             f.write(nextitem)
                     depview.close()

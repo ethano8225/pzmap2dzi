@@ -76,17 +76,19 @@ def get_mod_conf(mod_root, mod_id):
         tpath = os.path.join(mod_id, 'mods', name, 'media', 'texturepacks')
         map_root = os.path.join(mod_path, name, 'media', 'maps')
         fullpath=os.path.join(mod_root, tpath)
+        
         #############################
         if has_texture(fullpath) and os.path.isdir(map_root) and int(mod_id) in realdependencies:
-            for map_name in os.listdir(map_root):                               #if int(mod_id) in real, that means 
-                mpath = os.path.join(mod_id, 'mods', name, 'media', 'maps', map_name)#the map's textures may also be required for other
-                if is_map(os.path.join(mod_root, mpath)):                            #maps to load, otherwise other maps don't need it
-                    if 'map' in mod:
+            for map_name in os.listdir(map_root):                                    #"if int(mod_id) in realdeps" means if
+                mpath = os.path.join(mod_id, 'mods', name, 'media', 'maps', map_name)#the map's textures are also required for other
+                if is_map(os.path.join(mod_root, mpath)):                            #maps to load, put it in this catagory
+                    if 'map' in mod:                                              
                         print('multiple maps in single mod:')
                         print(mpath)
                     else:
                         mod['map+texture'] = mpath+":"+tpath
         ##############################
+        
         else:
             if has_texture(fullpath):
                 mod['texture'] = tpath
@@ -103,6 +105,7 @@ def get_mod_conf(mod_root, mod_id):
     return conf
 
 if __name__ == '__main__':
+    
     #############
     dependsavepath=".\\scripts\\dependsave\\"
     if len(os.listdir(dependsavepath)) == 3:
@@ -126,6 +129,7 @@ if __name__ == '__main__':
         for steamID in fakeIDs:
             fakedependencies.append(steamID)
     #############        Immediately deal with fake, real, and refreshdepends as to ensure depend_textures is correct
+    
     with open('conf.yaml', 'r') as f:
         conf = yaml.safe_load(f.read())
     mod_root = conf['mod_root']
@@ -137,10 +141,12 @@ if __name__ == '__main__':
             continue
         mods = get_mod_conf(mod_root, mod_id)
         for name in mods:
+            
             #############
-            if 'map+texture' in mods[name]: #adds a new variation, if mod is map and texture,
+            if 'map+texture' in mods[name]: #adds a new variation, if mod is has map, textures AND is required by other mods, add it to this list
                 mapandtexture.append((name, mods[name],mod_id))
             #############
+            
             elif 'map' in mods[name]:
                 maps.append((name, mods[name],mod_id))   #add mod_id to support auto-depend_textures
             elif 'texture' in mods[name]:
@@ -153,16 +159,20 @@ if __name__ == '__main__':
             f.write(TEXTURE_TEMPLATE.format(t['texture']))
             f.write('\n\n')
             
+        ################
         for name, t, mod_id in mapandtexture:
-            f.write('    {}:'.format(name))
-            save=t['map+texture']
+            f.write('    {}:'.format(name)) #adds texture template for maps req'd by other mods
+            save=t['map+texture']           #example: Over The Road (Otr) is one of these maps
             both=save.split(":")
             mp,text=both[0],both[1]
             f.write(TEXTURE_TEMPLATE.format(text))
             f.write('\n\n')
-            
+        #################
+        
         f.write('maps:' + DEFAULT_MAP)
         f.write('\n')
+        
+        #################
         for name, m, mod_id in mapandtexture:
             f.write('    {}:'.format(name))
             save=t['map+texture']
@@ -189,17 +199,18 @@ if __name__ == '__main__':
                         f.write("\n            - "+name)
                     depsave.close()
             f.write('\n\n')
-
+        #################
 
         for name, m,mod_id in maps:
             f.write('    {}:'.format(name))
             f.write(MAP_TEMPLATE.format(m['map']))
+            
             ################
             pathtosave=dependsavepath+str(mod_id)+".txt"
             if os.path.exists(pathtosave):
                 with open(pathtosave,"r") as depview:
-                    neededSteamIDs = [line.rstrip() for line in depview]
-                    for steamID in neededSteamIDs:
+                    neededSteamIDs = [line.rstrip() for line in depview] #if steamModID.txt exists, do not create a file for it
+                    for steamID in neededSteamIDs:                       # simply process the already-made file
                             nextitem= addRequiredModpacks(steamID)
                             f.write(nextitem)
                     depview.close()
@@ -217,6 +228,7 @@ if __name__ == '__main__':
                 refresh.write("0") #set refreshDepends = 0 after getting all {steamid}.txt files}
             refresh.close()        #(opening with "w" overwrites file)
             ################
+            
             if 'texture' in m:
                 f.write(TEXTURE_TEMPLATE.format(m['texture']))
             f.write('\n\n')

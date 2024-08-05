@@ -157,7 +157,8 @@ if __name__ == '__main__':
             f.write('    {}:'.format(name))
             f.write(TEXTURE_TEMPLATE.format(t['texture']))
             f.write('\n\n')
-        print(mapandtexture)
+            
+        ###############    
         for name, t, mod_id in mapandtexture:
             f.write('    {}:'.format(name))
             save=t['map+texture']
@@ -165,16 +166,17 @@ if __name__ == '__main__':
             mp,text=both[0],both[1]
             f.write(TEXTURE_TEMPLATE.format(text))
             f.write('\n\n')
-            
+        ###############
+        
         f.write('maps:' + DEFAULT_MAP)
         f.write('\n')
+        
+        ##############
         for name, m, mod_id in mapandtexture:
-            print(name)
             f.write('    {}:'.format(name))
             save=m['map+texture']
             both=save.split(":")
             mp,text=both[0],both[1]
-            print(mp, "MP")
             f.write(MAP_TEMPLATE.format(mp))
             pathtosave=dependsavepath+str(mod_id)+".txt"
             if os.path.exists(pathtosave) and refreshDepends==0:
@@ -198,7 +200,7 @@ if __name__ == '__main__':
                 else:
                     f.write("\n            - "+name) #if no mods req'd but it still needs to call itself
             f.write('\n\n')                          #for example, Eerie Country
-
+        ###############
 
         for name, m,mod_id in maps:
             f.write('    {}:'.format(name))
